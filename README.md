@@ -31,18 +31,31 @@ Ngoài ra hỗ trợ chạy toàn bộ test hoặc theo từng file.
 ## Cấu trúc dự án
 
 codecept-ev/
+
 ├── jira/
+
 │ ├── client.js # Client gọi Jira API (Axios)
+
 │ ├── config.js # Cấu hình môi trường
+
 │ ├── service.js # Logic tạo Task/Sub-task Jira
-│ ├── reporter.js # Lắng nghe event fail CodeceptJS
+
+│ ├── reporter.js # Lắng nghe event fail của CodeceptJS
+
 │
-├── tests/
-├── output/
-├── run.js
+
+├── tests/ # Chứa test case
+
+├── output/ # Chứa screenshot khi fail
+
+├── run.js # CLI runner (dry/jira/file mode)
+
 ├── codecept.conf.js
+
 ├── steps_file.js
+
 ├── .env
+
 ├── package.json
 
 ---
@@ -169,3 +182,12 @@ Nếu fail:
 - Một số test có thể bị timeout khi navigation
 - Feature name có thể hiển thị "Unknown" nếu thiếu metadata
 - Có thể cần retry strategy cho test flaky
+
+## Hướng phát triển
+
+- Đính kèm screenshot trực tiếp lên Jira
+- Retry tự động cho test fail không ổn định
+- Phân loại bug theo severity
+- Tích hợp Slack/Teams notify
+- Dashboard báo cáo HTML
+- Chạy song song (parallel execution)
