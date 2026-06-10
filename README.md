@@ -60,6 +60,14 @@ codecept-ev/
 
 ---
 
+## Tạo file test
+
+Cài dependencies:
+
+```bash
+npx codeceptjs gt
+```
+
 ## Cài đặt
 
 Cài dependencies:

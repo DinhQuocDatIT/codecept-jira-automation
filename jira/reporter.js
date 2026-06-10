@@ -12,10 +12,22 @@ function initJiraReporter() {
   }
 
   event.dispatcher.on(event.test.failed, async (test, err) => {
-    const feature = test.suite?.title || "Unknown";
+    // Ưu tiên lấy tên từ file test
+    const feature =
+      test?.file?.split("\\").pop()?.replace("_test.js", "") ||
+      test?.suite?.title ||
+      "Unknown";
+
     const scenario = test.title;
 
     const featureName = feature.charAt(0).toUpperCase() + feature.slice(1);
+
+    console.log("================================");
+    console.log("title:", test.title);
+    console.log("file:", test.file);
+    console.log("suite:", test.suite?.title);
+    console.log("feature:", feature);
+    console.log("================================");
 
     console.log(`🔥 FAIL: ${featureName} -> ${scenario}`);
 
@@ -25,7 +37,9 @@ function initJiraReporter() {
           `[UI Automation] ${featureName}`,
           featureName,
         );
+
         featureCache[feature] = taskKey;
+
         console.log(`📌 TASK CREATED: ${taskKey}`);
       }
 
