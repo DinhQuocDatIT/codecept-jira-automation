@@ -17,10 +17,8 @@ async function createTask(summary, feature) {
         name: "Task",
       },
 
-      // Label vẫn giữ
       labels: ["ui-automation", feature.toLowerCase().replace(/\s+/g, "-")],
 
-      // Thêm Component
       components: [
         {
           name: feature.toUpperCase(),
@@ -49,6 +47,25 @@ async function createTask(summary, feature) {
 }
 
 // =====================
+// SAFE ERROR
+// =====================
+function getErrorMessage(err) {
+  try {
+    if (typeof err?.message === "string") {
+      return err.message;
+    }
+
+    if (typeof err === "string") {
+      return err;
+    }
+
+    return JSON.stringify(err, null, 2);
+  } catch {
+    return "Không xác định";
+  }
+}
+
+// =====================
 // SUBTASK DESCRIPTION
 // =====================
 function buildDescription(err, test) {
@@ -56,10 +73,29 @@ function buildDescription(err, test) {
     test?.file?.split("\\").pop()?.replace("_test.js", "") || "Unknown";
 
   const fileName = test?.file?.split("\\").pop() || "N/A";
+
+  const expectedResult = err?.expected || "Không xác định";
+
+  let actualResult = "Không xác định";
+
+  // Assertion fail (I.see, I.dontSee, ...)
+  if (err?.expected && err?.actual) {
+    actualResult = `Không tìm thấy nội dung mong đợi trên giao diện: "${err.expected}"`;
+  }
+  // Các lỗi khác
+  else if (err?.message) {
+    actualResult = err.message;
+  }
+  // Fallback cuối cùng
+  else {
+    actualResult = String(err);
+  }
+
   return {
     type: "doc",
     version: 1,
     content: [
+
       {
         type: "paragraph",
         content: [
@@ -69,6 +105,7 @@ function buildDescription(err, test) {
           },
         ],
       },
+
       {
         type: "paragraph",
         content: [
@@ -78,6 +115,7 @@ function buildDescription(err, test) {
           },
         ],
       },
+
       {
         type: "paragraph",
         content: [
@@ -87,12 +125,33 @@ function buildDescription(err, test) {
           },
         ],
       },
+
       {
         type: "paragraph",
         content: [
           {
             type: "text",
-            text: `Error Message: ${err?.message || "Unknown Error"}`,
+            text: "Trạng thái: FAIL",
+          },
+        ],
+      },
+
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: `Kết quả mong đợi: ${expectedResult}`,
+          },
+        ],
+      },
+
+      {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: `Kết quả thực tế: ${actualResult}`,
           },
         ],
       },
@@ -122,12 +181,11 @@ async function createSubTask(parentKey, summary, err, test, feature) {
 
       labels: ["ui-automation", feature.toLowerCase().replace(/\s+/g, "-")],
 
-      // Thêm Component
-      components: [
-        {
-          name: feature.toUpperCase(),
-        },
-      ],
+      // components: [
+      //   {
+      //     name: feature.toUpperCase(),
+      //   },
+      // ],
 
       description: buildDescription(err, test),
     },

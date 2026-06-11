@@ -23,10 +23,12 @@ function initJiraReporter() {
     const featureName = feature.charAt(0).toUpperCase() + feature.slice(1);
 
     console.log("================================");
+    console.log("TEST FAIL");
     console.log("title:", test.title);
     console.log("file:", test.file);
-    console.log("suite:", test.suite?.title);
-    console.log("feature:", feature);
+
+    console.log("ERROR:");
+    console.dir(err, { depth: null });
     console.log("================================");
 
     console.log(`🔥 FAIL: ${featureName} -> ${scenario}`);
